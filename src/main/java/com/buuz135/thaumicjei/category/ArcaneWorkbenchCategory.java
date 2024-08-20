@@ -108,10 +108,6 @@ public class ArcaneWorkbenchCategory implements IRecipeCategory<ArcaneWorkbenchC
         recipeLayout.getItemStacks().init(0, false, 51 - 9 + 30, 7);
         int sizeX = 3;
         int sizeY = 3;
-        if (recipeWrapper.getRecipe() instanceof ShapedArcaneRecipe) {
-            sizeX = ((ShapedArcaneRecipe) recipeWrapper.getRecipe()).getRecipeWidth();
-            sizeY = ((ShapedArcaneRecipe) recipeWrapper.getRecipe()).getRecipeHeight();
-        }
         int slot = 1;
         for (int y = 0; y < sizeY; ++y) {
             for (int x = 0; x < sizeX; ++x) {
@@ -157,8 +153,24 @@ public class ArcaneWorkbenchCategory implements IRecipeCategory<ArcaneWorkbenchC
             List<List<ItemStack>> lists = new ArrayList<>();
             List<Ingredient> input = new ArrayList<>();
             ItemStack output = null;
-            if (recipe instanceof ShapedArcaneRecipe || recipe instanceof ShapelessArcaneRecipe) {
+            if (recipe instanceof ShapelessArcaneRecipe) {
                 input = recipe.getIngredients();
+                output = recipe.getRecipeOutput();
+            } else if (recipe instanceof ShapedArcaneRecipe){
+                ShapedArcaneRecipe shapedArcaneRecipe = (ShapedArcaneRecipe) recipe;
+                int sizeX = shapedArcaneRecipe.getRecipeWidth();
+                int sizeY = shapedArcaneRecipe.getRecipeHeight();
+                int slot = 0;
+                for (int y = 0; y < 3; ++y) {
+                    for (int x = 0; x < 3; ++x) {
+                        if (y < sizeY && x < sizeX){
+                            input.add(recipe.getIngredients().get(slot));
+                            ++slot;
+                        } else {
+                            input.add(Ingredient.EMPTY);
+                        }
+                    }
+                }
                 output = recipe.getRecipeOutput();
             }
             for (Ingredient ingredient : input) {
